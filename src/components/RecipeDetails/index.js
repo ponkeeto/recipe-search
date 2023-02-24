@@ -4,22 +4,26 @@ import { Grid } from "@mui/material";
 
 import { useSelector } from "react-redux/es/exports";
 import { selectRecipeDetails } from "./reducer";
+import RecipeCard from "../RecipeCard";
 
 const RecipeDetails = () => {
   const recipeDetails = useSelector(selectRecipeDetails);
   const { recipes, isLoading, hasError } = recipeDetails;
-  console.log(recipes);
+
   if (isLoading) {
     return <>loading...</>;
   }
 
   return !hasError ? (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} style={{ padding: "15px" }}>
       {recipes.map((recipe) => {
         return (
-          <Grid key={recipe.id} container flexDirection='column' item xs={3}>
-            <img src={recipe.image} alt={recipe.title} />
-            {recipe.title}
+          <Grid key={recipe.id} container flexDirection="column" item xs={3}>
+            <RecipeCard
+              id={recipe.id}
+              image={recipe.image}
+              title={recipe.title}
+            />
           </Grid>
         );
       })}

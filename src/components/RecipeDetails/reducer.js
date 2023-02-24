@@ -18,7 +18,7 @@ export const loadRecipes = createAsyncThunk(
     const apiKey = "6931ba0df2c64da0b3aaf7dac038aa9c";
     const requestURL = `https://api.spoonacular.com/recipes/${
       category === "Ingredients" ? "findByIngredients" : "complexSearch"
-    }?${querySelection()}&apiKey=${apiKey}`;
+    }?${querySelection()}&number=12&apiKey=${apiKey}`;
 
     const response = await fetch(requestURL);
     const json = await response.json();
