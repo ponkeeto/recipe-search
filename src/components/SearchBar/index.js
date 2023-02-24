@@ -10,13 +10,14 @@ import {
   InputLabel,
 } from "@mui/material";
 
-import { useDispatch, useSelector } from "react-redux/es/exports";
+import { useDispatch, useSelector } from "react-redux";
 import {
   selectCategory,
   selectSearchTerm,
   setCategory,
   setSearchTerm,
 } from "./reducer";
+import { loadRecipes } from "../RecipeDetails/reducer";
 
 const SearchBar = () => {
   const category = useSelector(selectCategory);
@@ -71,6 +72,9 @@ const SearchBar = () => {
           fullWidth
           disabled={!isEmpty}
           style={{ padding: "10px" }}
+          onClick={() => {
+            dispatch(loadRecipes({ category, searchTerm }));
+          }}
         >
           Submit
         </Button>

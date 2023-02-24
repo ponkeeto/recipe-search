@@ -1,34 +1,32 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-export function loadRecipes(category, searchTerm) {
-  createAsyncThunk("loadRecipes", async () => {
+export const loadRecipes = createAsyncThunk(
+  "recipeDetails/loadRecipes",
+  async ({ category, searchTerm }) => {
     let query = "";
     const querySelection = () => {
       if (category === "Ingredient") {
         query = `ingredients=${searchTerm}`;
-      } else if (category === "cuisine") {
+      } else if (category === "Cuisine") {
         query = `cuisine=${searchTerm}`;
       } else {
         query = `query=${searchTerm}`;
       }
       return query;
     };
-    const apiKey = '6931ba0df2c64da0b3aaf7dac038aa9c'
+
+    const apiKey = "6931ba0df2c64da0b3aaf7dac038aa9c";
     const requestURL = `https://api.spoonacular.com/recipes/${
       category === "Ingredients" ? "findByIngredients" : "complexSearch"
     }?${querySelection()}&apiKey=${apiKey}`;
-    console.log(requestURL)
-    const response = await fetch(requestURL, {
-      method: "GET",
-      headers: {
-        "Content-type": "application-json",
-      },
-    });
-    return response.json();
-  });
-}
 
-const sliceOptions = {
+    const response = await fetch(requestURL);
+    const json = await response.json();
+    return json;
+  }
+);
+
+export const recipeDetailsSlice = createSlice({
   name: "recipeDetails",
   initialState: {
     recipes: [],
@@ -42,7 +40,7 @@ const sliceOptions = {
       state.hasError = false;
     },
     [loadRecipes.fulfilled]: (state, action) => {
-      state.recipes = action.payload;
+      state.recipes= action.payload.results;
       state.isLoading = false;
       state.hasError = false;
     },
@@ -51,8 +49,8 @@ const sliceOptions = {
       state.hasError = true;
     },
   },
-};
+});
 
-export const recipeDetailsSlice = createSlice(sliceOptions);
+export const selectRecipeDetails = (state) => state.recipeDetails;
 
-export const selectRecipeDetails = (state) => state.recipeDetails.recipes;
+export default recipeDetailsSlice.reducer;
