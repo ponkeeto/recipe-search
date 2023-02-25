@@ -30,17 +30,27 @@ export const recipeDetailsSlice = createSlice({
   name: "recipeDetails",
   initialState: {
     recipes: [],
+    favoriteRecipes: [],
     isLoading: false,
     hasError: false,
   },
-  reducers: {},
+  reducers: {
+    addFavorite: (state, action) => {
+      state.favoriteRecipes.push(action.payload);
+    },
+    removeFavorite: (state, action) => {
+      state.favoriteRecipes.filter(
+        (recipe) => recipe.id === action.payload
+      );
+    },
+  },
   extraReducers: {
     [loadRecipes.pending]: (state) => {
       state.isLoading = true;
       state.hasError = false;
     },
     [loadRecipes.fulfilled]: (state, action) => {
-      state.recipes= action.payload.results;
+      state.recipes = action.payload.results;
       state.isLoading = false;
       state.hasError = false;
     },
@@ -50,6 +60,8 @@ export const recipeDetailsSlice = createSlice({
     },
   },
 });
+
+export const { addFavorite, removeFavorite } = recipeDetailsSlice.actions;
 
 export const selectRecipeDetails = (state) => state.recipeDetails;
 
