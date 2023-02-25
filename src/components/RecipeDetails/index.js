@@ -23,7 +23,7 @@ const RecipeDetails = () => {
       <Grid container spacing={2} style={{ padding: "15px" }}>
         {recipes.map((recipe) => {
           return (
-            <Grid key={recipe.id} container flexDirection="column" item xs={6} md={3}>
+            <Grid key={recipe.id} container flexDirection="column" item xs={12} sm={6} md={3}>
               <RecipeCard
                 id={recipe.id}
                 image={recipe.image}

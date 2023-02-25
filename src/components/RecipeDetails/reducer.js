@@ -14,11 +14,11 @@ export const loadRecipes = createAsyncThunk(
       }
       return query;
     };
+    const searchQuery =
+      category === "Ingredient" ? "findByIngredients" : "complexSearch";
 
     const apiKey = "6931ba0df2c64da0b3aaf7dac038aa9c";
-    const requestURL = `https://api.spoonacular.com/recipes/${
-      category === "Ingredients" ? "findByIngredients" : "complexSearch"
-    }?${querySelection()}&number=12&apiKey=${apiKey}`;
+    const requestURL = `https://api.spoonacular.com/recipes/${searchQuery}?${querySelection()}&number=12&apiKey=${apiKey}`;
 
     const response = await fetch(requestURL);
     const json = await response.json();
@@ -39,9 +39,7 @@ export const recipeDetailsSlice = createSlice({
       state.favoriteRecipes.push(action.payload);
     },
     removeFavorite: (state, action) => {
-      state.favoriteRecipes.filter(
-        (recipe) => recipe.id === action.payload
-      );
+      state.favoriteRecipes.filter((recipe) => recipe.id === action.payload);
     },
   },
   extraReducers: {
@@ -50,7 +48,11 @@ export const recipeDetailsSlice = createSlice({
       state.hasError = false;
     },
     [loadRecipes.fulfilled]: (state, action) => {
-      state.recipes = action.payload.results;
+      if ("results" in action.payload) {
+        state.recipes = action.payload.results;
+      } else {
+        state.recipes = action.payload;
+      }
       state.isLoading = false;
       state.hasError = false;
     },

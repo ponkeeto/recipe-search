@@ -8,6 +8,8 @@ import {
   OutlinedInput,
   Button,
   InputLabel,
+  Divider,
+  useMediaQuery,
 } from "@mui/material";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +22,7 @@ import {
 import { loadRecipes } from "../RecipeDetails/reducer";
 
 const SearchBar = () => {
+  const matches = useMediaQuery("(min-width:600px)");
   const category = useSelector(selectCategory);
   const searchTerm = useSelector(selectSearchTerm);
   const dispatch = useDispatch();
@@ -30,56 +33,71 @@ const SearchBar = () => {
   const isEmpty = category !== "" && searchTerm !== "";
 
   return (
-    <Grid
-      container
-      spacing={2}
-      justifyContent="center"
-      alignItems="center"
-      style={{ margin: "20px" }}
-    >
-      <Grid item xs={2}>
-        <FormControl fullWidth>
-          <InputLabel>Category</InputLabel>
-          <Select
-            value={category}
-            label="Category"
-            onChange={(e) => {
-              dispatch(setCategory(e.target.value));
+    <>
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        flexDirection="row"
+        style={{ margin: "20px 0", maxWidth: "100%" }}
+      >
+        <Grid
+          item
+          xs={matches ? 2 : 8}
+          style={{ padding: matches ? "0 10px" : "10px 0" }}
+        >
+          <FormControl fullWidth>
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={category}
+              label="Category"
+              onChange={(e) => {
+                dispatch(setCategory(e.target.value));
+              }}
+            >
+              {choices.map((choice, index) => (
+                <MenuItem key={index} value={choice}>
+                  {choice}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid
+          item
+          xs={matches ? 5 : 8}
+          style={{ padding: matches ? "0 10px" : "10px 0" }}
+        >
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel>{searchLabel}</InputLabel>
+            <OutlinedInput
+              onChange={(e) => {
+                dispatch(setSearchTerm(e.target.value));
+              }}
+              label={searchLabel}
+            />
+          </FormControl>
+        </Grid>
+        <Grid
+          item
+          xs={matches ? 2 : 8}
+          style={{ padding: matches ? "0 10px" : "10px 0" }}
+        >
+          <Button
+            variant="contained"
+            fullWidth
+            disabled={!isEmpty}
+            style={{ padding: "10px", width: '66%' }}
+            onClick={() => {
+              dispatch(loadRecipes({ category, searchTerm }));
             }}
           >
-            {choices.map((choice, index) => (
-              <MenuItem key={index} value={choice}>
-                {choice}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            Submit
+          </Button>
+        </Grid>
       </Grid>
-      <Grid item xs={6}>
-        <FormControl variant="outlined" fullWidth>
-          <InputLabel>{searchLabel}</InputLabel>
-          <OutlinedInput
-            onChange={(e) => {
-              dispatch(setSearchTerm(e.target.value));
-            }}
-            label={searchLabel}
-          />
-        </FormControl>
-      </Grid>
-      <Grid item xs={2}>
-        <Button
-          variant="contained"
-          fullWidth
-          disabled={!isEmpty}
-          style={{ padding: "10px" }}
-          onClick={() => {
-            dispatch(loadRecipes({ category, searchTerm }));
-          }}
-        >
-          Submit
-        </Button>
-      </Grid>
-    </Grid>
+      <Divider />
+    </>
   );
 };
 

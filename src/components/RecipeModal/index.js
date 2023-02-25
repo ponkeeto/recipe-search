@@ -17,14 +17,16 @@ import {
   TableCell,
   IconButton,
   Grid,
+  useMediaQuery,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 import { addFavorite, removeFavorite } from "../RecipeDetails/reducer";
+import Drawer from "@mui/material/Drawer/Drawer";
 
-const style = {
+const modalStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -36,7 +38,15 @@ const style = {
   p: 4,
 };
 
+const drawerStyle = {
+    height: "100%",
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,};
+
 const RecipeModal = (props) => {
+  const matches = useMediaQuery("(min-width:600px)");
   const { open, handleClose, recipe, isLoading, dispatch } = props;
   const [expanded, setExpanded] = useState(false);
   const [favorite, setFavorite] = useState(false);
@@ -58,9 +68,9 @@ const RecipeModal = (props) => {
 
   const handleFavorite = () => {
     if (!favorite) {
-        dispatch(addFavorite({id, title, image, imageType}))
+      dispatch(addFavorite({ id, title, image, imageType }));
     } else {
-        dispatch(removeFavorite(id))
+      dispatch(removeFavorite(id));
     }
     setFavorite(() => {
       return !favorite;
@@ -192,81 +202,89 @@ const RecipeModal = (props) => {
     return null;
   };
 
-  return (
-    <Modal open={open} onClose={handleClose}>
-      <Box sx={style}>
-        {!isLoading ? (
-          <>
-            <Grid container>
-              <Grid item xs={11}>
-                <Typography variant="h5" component="h2">
-                  {title}
-                </Typography>
-              </Grid>
-              <Grid item xs={1}>
-                <IconButton aria-label="favorite" onClick={handleFavorite}>
-                  {favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                </IconButton>
-              </Grid>
+  const renderContent = (
+    <Box sx={matches ? modalStyle : drawerStyle}>
+      {!isLoading ? (
+        <>
+          <Grid container>
+            <Grid item xs={11}>
+              <Typography variant="h5" component="h2">
+                {title}
+              </Typography>
             </Grid>
-            <Accordion
-              expanded={expanded === "panel1"}
-              onChange={handleChange("panel1")}
+            <Grid item xs={1}>
+              <IconButton aria-label="favorite" onClick={handleFavorite}>
+                {favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+              </IconButton>
+            </Grid>
+          </Grid>
+          <Accordion
+            expanded={expanded === "panel1"}
+            onChange={handleChange("panel1")}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1bh-content"
+              id="panel1bh-header"
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-              >
-                <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                  Ingredients
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>{ingredientsData()}</AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={expanded === "panel2"}
-              onChange={handleChange("panel2")}
+              <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                Ingredients
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>{ingredientsData()}</AccordionDetails>
+          </Accordion>
+          <Accordion
+            expanded={expanded === "panel2"}
+            onChange={handleChange("panel2")}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel2bh-content"
+              id="panel2bh-header"
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2bh-content"
-                id="panel2bh-header"
-              >
-                <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                  Instructions
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography sx={{ maxHeight: "250px", overflow: "scroll" }}>
-                  {instructions}
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={expanded === "panel3"}
-              onChange={handleChange("panel3")}
+              <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                Instructions
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography sx={{ maxHeight: "250px", overflow: "scroll" }}>
+                {instructions}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion
+            expanded={expanded === "panel3"}
+            onChange={handleChange("panel3")}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel3bh-content"
+              id="panel3bh-header"
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel3bh-content"
-                id="panel3bh-header"
-              >
-                <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                  Nutrition
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>{nutritionData()}</AccordionDetails>
-            </Accordion>
-            <a href={sourceUrl} target="_blank">
-              Check out the website
-            </a>
-          </>
-        ) : (
-          <>loading...</>
-        )}
-      </Box>
+              <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                Nutrition
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>{nutritionData()}</AccordionDetails>
+          </Accordion>
+          <a href={sourceUrl} target="_blank">
+            Check out the website
+          </a>
+        </>
+      ) : (
+        <>loading...</>
+      )}
+    </Box>
+  );
+
+  return matches ? (
+    <Modal open={open} onClose={handleClose}>
+      {renderContent}
     </Modal>
+  ) : (
+    <Drawer anchor="top" open={open} onClose={handleClose}>
+      {renderContent}
+    </Drawer>
   );
 };
 
