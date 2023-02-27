@@ -39,7 +39,7 @@ export const recipeDetailsSlice = createSlice({
       state.favoriteRecipes.push(action.payload);
     },
     removeFavorite: (state, action) => {
-      state.favoriteRecipes = state.favoriteRecipes.filter((recipe) => recipe.id === action.payload);
+      state.favoriteRecipes = state.favoriteRecipes.filter((recipe) => recipe.id !== action.payload);
     },
   },
   extraReducers: {
