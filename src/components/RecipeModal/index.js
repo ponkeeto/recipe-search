@@ -47,10 +47,7 @@ const drawerStyle = {
 
 const RecipeModal = (props) => {
   const matches = useMediaQuery("(min-width:600px)");
-  const { open, handleClose, recipe, isLoading, dispatch } = props;
-  const [expanded, setExpanded] = useState(false);
-  const [favorite, setFavorite] = useState(false);
-
+  const { open, handleClose, recipe, isLoading, dispatch, favoriteRecipes } = props;
   const {
     id,
     title,
@@ -61,6 +58,12 @@ const RecipeModal = (props) => {
     nutrition,
     extendedIngredients: ingredients,
   } = recipe;
+
+  const isInFavorites = Boolean(favoriteRecipes.find(elem => elem.id === recipe.id))
+
+  const [expanded, setExpanded] = useState(false);
+  const [favorite, setFavorite] = useState(isInFavorites);
+
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);

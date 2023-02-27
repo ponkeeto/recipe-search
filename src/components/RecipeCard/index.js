@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import RecipeModal from "../RecipeModal";
 
 const RecipeCard = (props) => {
-  const { id, image, title } = props;
+  const { id, image, title, favoriteRecipes } = props;
   const [open, setOpen] = useState(false);
 
   const recipeInfo = useSelector(selectRecipeInfo);
@@ -35,6 +35,7 @@ const RecipeCard = (props) => {
         recipe={recipe}
         isLoading={isLoading}
         dispatch={dispatch}
+        favoriteRecipes={favoriteRecipes}
       />
       <Card raised key={id} className="img" style={{ height: "100%" }}>
         <CardActionArea onClick={handleOpen}>
